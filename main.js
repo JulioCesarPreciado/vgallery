@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 let camera, scene, renderer, controls;
 
@@ -21,7 +22,7 @@ animate();
 
 function floor(size) {
     const textureLoader = new THREE.TextureLoader();
-    const floorTexture = textureLoader.load('/static/textures/grass.avif');
+    const floorTexture = textureLoader.load('/static/textures/castor.png');
 
     // Configura la textura para que se repita
     floorTexture.wrapS = THREE.RepeatWrapping;
@@ -39,7 +40,7 @@ function floor(size) {
 function limitantWalls(size) {
     // Cargar la textura
     const textureLoader = new THREE.TextureLoader();
-    const wallTexture = textureLoader.load('/static/textures/black-stacked-stones.jpg'); // Cambia a la URL de tu textura de pared
+    const wallTexture = textureLoader.load('/static/textures/castor.png'); // Cambia a la URL de tu textura de pared
 
     // Configura la textura para que se repita si es necesario
     wallTexture.wrapS = THREE.RepeatWrapping;
@@ -91,6 +92,23 @@ function loadObjWithMtl(objPath, mtlPath, position) {
     });
 }
 
+function loadGLBModel(path, position, scale = new THREE.Vector3(1, 1, 1)) {
+    return new Promise((resolve, reject) => {
+        const loader = new GLTFLoader();
+        loader.load(
+            path,
+            (gltf) => {
+                const model = gltf.scene;
+                model.position.set(position.x, position.y, position.z);
+                model.scale.set(scale.x, scale.y, scale.z);
+                resolve(model);
+            },
+            undefined,
+            reject
+        );
+    });
+}
+
 function init() {
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
     camera.position.y = 10;
@@ -120,13 +138,23 @@ function init() {
     scene.add(floor(2000))
     /* Paredes limitantes */
     scene.add(limitantWalls(2000))
-    /* Cabaña */
-    const position = new THREE.Vector3(100, 0, 0);
-    loadObjWithMtl('/static/models/house/cottage_obj.obj', '/static/models/house/cottage_obj.mtl', position).then((object) => {
-        scene.add(object);
+    /* Amor */
+    /*var position = new THREE.Vector3(100, 0, 0);
+    var scale = new THREE.Vector3(100, 100, 100);
+    loadGLBModel('/static/models/amor.glb', position, scale).then((model) => {
+        scene.add(model);
     }).catch((error) => {
-        console.error('Error loading object:', error);
-    })
+        console.error('Error loading GLB model:', error);
+    });*/
+    /* Amor */
+    /*var position = new THREE.Vector3(100, 70, 50);
+    var scale = new THREE.Vector3(100, 100, 100);
+    loadGLBModel('/static/models/poly.glb', position, scale).then((model) => {
+        scene.add(model);
+    }).catch((error) => {
+        console.error('Error loading GLB model:', error);
+    });*/
+
     const onKeyDown = function (event) {
         switch (event.code) {
             case 'ArrowUp':

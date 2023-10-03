@@ -1,1 +1,3 @@
 # vgallery
+
+npx vite
